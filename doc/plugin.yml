@@ -1,0 +1,3 @@
+name: @NAME@
+main: org.cvpcs.bukkit.elements.Elements
+version: @VERSION@

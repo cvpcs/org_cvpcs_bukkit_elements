@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Elements" default="release" basedir=".">
+  <!-- description -->
+  <description>
+    build file for the Elements project
+  </description>
+  
+  <!-- properties -->
+  <property name="dir.bin" location="bin" />
+  <property name="dir.doc" location="doc" />
+  <property name="dir.lib" location="lib" />
+  <property name="dir.src" location="src" />
+
+  <!-- paths -->
+  <path id="cp.libs">
+    <fileset dir="${dir.lib}">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+
+  <!-- targets -->
+  <target name="compile">
+    <mkdir dir="${dir.bin}" />
+
+    <javac srcdir="${dir.src}" destdir="${dir.bin}" includeAntRuntime="false">
+      <classpath refid="cp.libs" />
+    </javac>
+  </target>
+
+  <target name="release" depends="compile">
+    <mkdir dir="${dir.bin}" />
+
+    <!-- grab the next version -->
+    <propertyfile file="build.properties">
+      <entry key="version.major" type="int" default="0" />
+      <entry key="version.minor" type="int" default="0" />
+      <entry key="version.revision" type="int" default="0" />
+      <entry key="version.build" type="int" operation="+" default="0" />
+    </propertyfile>
+    <property file="build.properties" />
+    <property name="version" value="${version.major}.${version.minor}.${version.revision}.${version.build}" />
+
+    <!-- setup the plugin.yml file -->
+    <copy file="${dir.doc}/plugin.yml" tofile="${dir.bin}/plugin.yml" overwrite="true" />
+    <replace file="${dir.bin}/plugin.yml">
+      <replacefilter token="@NAME@" value="${ant.project.name}" />
+      <replacefilter token="@VERSION@" value="${version}" />
+    </replace>
+
+    <!-- delete an recreate any jar files -->
+    <delete>
+      <fileset dir="${dir.bin}" includes="${ant.project.name}-*.jar" />
+    </delete>
+    <jar jarfile="${dir.bin}/${ant.project.name}-${version}.jar">
+      <fileset dir="${dir.bin}">
+        <include name="**/*.class" />
+      </fileset>
+      <zipfileset file="${dir.bin}/plugin.yml" fullpath="plugin.yml" />
+      <zipfileset file="README.md" fullpath="README" />
+    </jar>
+  </target>
+
+  <target name="clean">
+    <delete dir="${dir.bin}" />
+  </target>
+</project>
