@@ -11,6 +11,9 @@
   <property name="dir.lib" location="lib" />
   <property name="dir.src" location="src" />
 
+  <property name="build.version" value="0" />
+  <property name="build.number" value="0" />
+
   <!-- paths -->
   <path id="cp.libs">
     <fileset dir="${dir.lib}">
@@ -30,28 +33,18 @@
   <target name="release" depends="compile">
     <mkdir dir="${dir.bin}" />
 
-    <!-- grab the next version -->
-    <propertyfile file="build.properties">
-      <entry key="version.major" type="int" default="0" />
-      <entry key="version.minor" type="int" default="0" />
-      <entry key="version.revision" type="int" default="0" />
-      <entry key="version.build" type="int" operation="+" default="0" />
-    </propertyfile>
-    <property file="build.properties" />
-    <property name="version" value="${version.major}.${version.minor}.${version.revision}.${version.build}" />
-
     <!-- setup the plugin.yml file -->
     <copy file="${dir.doc}/plugin.yml" tofile="${dir.bin}/plugin.yml" overwrite="true" />
     <replace file="${dir.bin}/plugin.yml">
       <replacefilter token="@NAME@" value="${ant.project.name}" />
-      <replacefilter token="@VERSION@" value="${version}" />
+      <replacefilter token="@VERSION@" value="${build.version}-b${build.number}" />
     </replace>
 
     <!-- delete an recreate any jar files -->
     <delete>
       <fileset dir="${dir.bin}" includes="${ant.project.name}-*.jar" />
     </delete>
-    <jar jarfile="${dir.bin}/${ant.project.name}-${version}.jar">
+    <jar jarfile="${dir.bin}/${ant.project.name}.jar">
       <fileset dir="${dir.bin}">
         <include name="**/*.class" />
       </fileset>
