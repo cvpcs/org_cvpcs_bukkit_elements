@@ -40,10 +40,7 @@
       <replacefilter token="@VERSION@" value="${build.version}-b${build.number}" />
     </replace>
 
-    <!-- delete an recreate any jar files -->
-    <delete>
-      <fileset dir="${dir.bin}" includes="${ant.project.name}-*.jar" />
-    </delete>
+    <!-- create the jar file -->
     <jar jarfile="${dir.bin}/${ant.project.name}.jar">
       <fileset dir="${dir.bin}">
         <include name="**/*.class" />
